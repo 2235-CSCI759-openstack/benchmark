@@ -2,13 +2,14 @@ import requests
 import statistics
 import time
 
-def make_api_calls(endpoint, num_calls, payload_size):
+def make_api_calls(endpoint, num_calls, payload_size, delay=0.1):
     responses = []
     for _ in range(num_calls):
         response = requests.post(endpoint, json={"payload_size": payload_size})
         if response.status_code == 200:
             responses.append(response.json())
-            time.sleep(0.1)
+            if delay > 0:
+                time.sleep(delay)
     return responses
 
 def process_data(data):
@@ -24,9 +25,10 @@ def process_data(data):
 if __name__ == "__main__":
     endpoint = "http://192.168.1.210:32774"
     num_calls = 100
-    payload_size = 200
+    payload_size = 3200
+    delay = 0.1
     
-    responses = make_api_calls(endpoint, num_calls, payload_size)
+    responses = make_api_calls(endpoint, num_calls, payload_size, delay)
     print(responses)
     if responses:
         mean, minimum, maximum, std_dev = process_data(responses)
